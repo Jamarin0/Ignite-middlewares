@@ -10,7 +10,7 @@ app.use(cors());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  const  {username} = request.headers;
+  const { username } = request.headers;
 
   const usernameAlreadyExists = users.some((user) => user.username === username);
 
@@ -24,11 +24,22 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  if (user.pro) {
+    return response.status(404).json({ error: 'Pro plan is already activated.' });
+  }
+  if (user.todo <= 10) {
+    return response.status(404).json({ error: 'to do less than or equal to ten' });
+  }
+
+  return next();
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const {username} = request.headers;
+  const {id} = request.params;
+  
 }
 
 function findUserById(request, response, next) {
