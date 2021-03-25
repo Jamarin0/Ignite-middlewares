@@ -37,13 +37,33 @@ function checksCreateTodosUserAvailability(request, response, next) {
 }
 
 function checksTodoExists(request, response, next) {
-  const {username} = request.headers;
-  const {id} = request.params;
-  
+  const { username } = request.headers;
+  const { id } = request.params;
+
+  const valitodo = users.some((user) => user.username === username);
+  if (!valitodo) {
+    return response.status(404).json({ error: 'Username not exists' });
+  }
+
+  if(!todo.id != uuidv4){
+    return response.status(404).json({ error: 'Username not exists' });
+  }
+  request.user = valitodo;
+
+  return next();
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+
+  const usernameAlreadyExists = users.some((user) => user.id === id);
+
+  if (!usernameAlreadyExists) {
+    return response.status(404).json({ error: 'Username not exists' });
+  }
+  request.user = usernameAlreadyExists;
+
+  return next();
 }
 
 app.post('/users', (request, response) => {
