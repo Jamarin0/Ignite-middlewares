@@ -18,7 +18,7 @@
  
 ![image](https://user-images.githubusercontent.com/62247144/120123006-f083a280-c182-11eb-9200-79359e827921.png)
 
- <h1 alling="center">upgrade to the pro plan</h1>
+ <h1 alling="center">Upgrade to the pro plan</h1>
 
 ![image](https://user-images.githubusercontent.com/62247144/120123155-9b945c00-c183-11eb-9be2-a92216468e01.png)
 
