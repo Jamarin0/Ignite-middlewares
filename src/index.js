@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const { v4: uuidv4, validate } = require('uuid');
+const { json } = require('express');
 
 const app = express();
 app.use(express.json());
@@ -12,12 +13,12 @@ const users = [];
 function checksExistsUserAccount(request, response, next) {
   const { username } = request.headers;
 
-  const usernameAlreadyExists = users.some((user) => user.username === username);
+  const user = users.find(user => user.username === username);
 
-  if (usernameAlreadyExists) {
-    return response.status(404).json({ error: 'Username already exists' });
+  if (!user) {
+    return response.status(404).json({ error: 'Username not found' });
   }
-  request.user = usernameAlreadyExists;
+  request.user = user;
 
   return next();
 
@@ -26,29 +27,26 @@ function checksExistsUserAccount(request, response, next) {
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
 
-  if (user.pro) {
-    return response.status(404).json({ error: 'Pro plan is already activated.' });
-  }
-  if (user.todo <= 10) {
-    return response.status(404).json({ error: 'to do less than or equal to ten' });
+  if (!user.pro && user.todos.length === 10) {
+    return response.status(403).json({ error: 'Todos user not availability' });
   }
 
   return next();
 }
 
 function checksTodoExists(request, response, next) {
+
   const { username } = request.headers;
   const { id } = request.params;
 
-  const valitodo = users.some((user) => user.username === username);
-  if (!valitodo) {
-    return response.status(404).json({ error: 'Username not exists' });
-  }
+  const user = users.find(user => user.username === username);
+  if (!user) return response.status(404).json({ error: 'Username not exists' });
+  if (!validate(id)) return response.status(400).json({ error: 'Id invalid' });
+  const todo = user.todos.find(todo => todo.id === id);
+  if(!todo) return response.status(404).json({ error: 'todo not found'});
 
-  if(!todo.id != uuidv4){
-    return response.status(404).json({ error: 'Username not exists' });
-  }
-  request.user = valitodo;
+  request.todo= todo;
+  request.user = user;
 
   return next();
 }
@@ -56,12 +54,12 @@ function checksTodoExists(request, response, next) {
 function findUserById(request, response, next) {
   const { id } = request.params;
 
-  const usernameAlreadyExists = users.some((user) => user.id === id);
+  const user = users.find(user => user.id === id);
 
-  if (!usernameAlreadyExists) {
+  if (!user) {
     return response.status(404).json({ error: 'Username not exists' });
   }
-  request.user = usernameAlreadyExists;
+  request.user = user;
 
   return next();
 }
